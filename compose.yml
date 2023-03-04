@@ -1,0 +1,29 @@
+
+networks:
+  backend:
+
+volumes:
+  contract_node_modules:
+  frontend_node_modules:
+  node_modules:
+
+services:
+  app: &app
+    tty: true
+    stdin_open: true
+    build: ./contract
+    environment:
+      dapk: "8312700601314f76129d91130b5e9a29b3345a21129a5748b849da51a0934325"
+      NODE_OPTIONS: "--openssl-legacy-provider"
+      ETHERSCAN_API_KEY: "EDBKYENP4HQJ3B5QAKJXUMDK245521HN7J"
+    volumes:
+      - ./contract/:/usr/app/contract
+      - ./root/.cache/hardhat-nodejs/compilers/linux-amd64:/root/.cache/hardhat-nodejs/compilers/linux-amd64/
+      - contract_node_modules:/usr/app/contract/node_modules
+      - ./contract/artifacts:/usr/app/contract/artifacts
+      - ./root/.cache/hardhat-nodejs/compilers/:/root/.cache/hardhat-nodejs/compilers/
+      - ./frontend/src:/usr/app/contract/artifacts/contracts
+ 
+  test:
+    <<: *app
+    command: "npx hardhat test --verbose"
