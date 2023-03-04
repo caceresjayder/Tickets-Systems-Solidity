@@ -3,7 +3,7 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/utils/Base64.sol';
@@ -51,9 +51,10 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
         _tokenIdCounter.increment();
     }
 
-    function buyToken() public {
+    function buyToken() public payable{
         address buyer = msg.sender;
-        require(sendEther(contractAddress, priceToPay), "Payment Failed, Check your balance");
+        require(msg.value == priceToPay, string.concat("Need to send ", Strings.toString(priceToPay), " wei"));
+        require(sendEther(ownerAddress, priceToPay), "Payment Failed, Check your balance");
         uint256 tokenId = _tokenIdCounter.current();
         tokenSerial[tokenId] = createTokenDNA(buyer, tokenId);
         _safeMint(buyer, tokenId);
@@ -71,7 +72,7 @@ contract TicketSystem is ERC721, Ownable, ERC721Enumerable, TokenCreation, SendE
     }
 
     function redeem(uint256 tokenId) public{
-        require(_exists(tokenId) && ownerOf(0) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
+        require(_exists(tokenId) && ownerOf(tokenId) == msg.sender, "You don't have tokens in this platform, try buying a token or with another wallet");
         uint256 clientToRedeem = _clientToRedeem.current();
         _clientToRedeem.increment();
         _burn(tokenId);
