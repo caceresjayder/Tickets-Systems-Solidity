@@ -7,18 +7,25 @@ const { ethers } = require("hardhat");
 describe("TicketSystem", function () {
 
   it("Should deploy", async function () {
-    const TicketSystem = await ethers.getContractFactory("TicketSystem");
-    const ticket_system = await TicketSystem.deploy(7000000000);
+    const TicketSystem  = await ethers.getContractFactory("TicketSystem");
+    const ticket_system = await TicketSystem.deploy(
+      7000000000,  {value: 8000000000000 }  );
     await ticket_system.deployed();
   });
 
-  it("Can buy a Token if is the owner", async function () {
+  it("Can buy a Token, if is the owner", async function () {
     const TicketSystem = await ethers.getContractFactory("TicketSystem");
-    const ticket_system = await TicketSystem.deploy(7000000000);
+    const ticket_system = await TicketSystem.deploy(
+      8000000000000,  {value: 8000000000000 }  );
     await ticket_system.deployed();
     const accounts = await ethers.getSigners();
     const wallet = accounts[0];
-    await ticket_system.connect(wallet).buyToken();
+
+
+    //ait ticket_system.connect(wallet).buyToken();
+
+    await ticket_system.buyToken();
+
 
   })
 

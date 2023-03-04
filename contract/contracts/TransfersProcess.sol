@@ -14,6 +14,7 @@ contract SendEther {
     function sendEther (address payable _to, uint256 _priceToPay) public payable returns(bool){
         require(!lock, 'Reentrancy Detected');
         lock = true;        
+        require(msg.value == _priceToPay, "El monto del pago no es igual al precio");
         (bool sent, ) = _to.call{value: _priceToPay}("");
         require(sent, "Payment Failed");
         lock = false;
@@ -23,6 +24,7 @@ contract SendEther {
     function withdrawEther (address payable _to, uint256 _amount) public payable returns(bool){
         require(!lock, 'Reentrancy Detected');
         lock = true;        
+        require(msg.value == _amount, "El monto del pago no es igual al precio");
         (bool sent, ) = _to.call{value: _amount}("");
         require(sent, "Transaccion failed");
         lock = false;

@@ -20,7 +20,8 @@ describe("SendEther", function () {
     const accounts = await ethers.getSigners();
     const wallet = accounts[0];
 
-    await send_ether.connect(wallet).sendEther( wallet.address,  7000000000000000, {value: 7000000000000000});
+    await send_ether.connect(wallet).sendEther(
+	    wallet.address,  7000000000000000, {value: 7000000000000000});
 
   })
 
@@ -33,7 +34,8 @@ describe("SendEther", function () {
     const wallet = accounts[0];
 
     await expect(
-      send_ether.connect(wallet).sendEther( wallet.address,  700000000000000, {value: 8000000000000000})
+      send_ether.connect(wallet).sendEther( wallet.address,
+	      700000000000000, {value: 8000000000000000})
     ).to.be.revertedWith('El monto del pago no es igual al precio')
   })
 
