@@ -59,7 +59,7 @@ describe("TicketSystem Testing", () => {
     it("buy succesful", async () => {
       const priceToPay = ethers.utils.parseEther("1");
       const { owner, deployed } = await setup({ priceToPay });
-      await deployed.buyToken();
+      await deployed.buyToken({ value: priceToPay});
       const a = await deployed.ownerOf(0);
       expect(a).to.equal(owner.address);
     });
@@ -74,7 +74,7 @@ describe("TicketSystem Testing", () => {
     it("buy unsuccesful", async () => {
       const priceToPay = ethers.utils.parseEther("10000");
       const { deployed } = await setup({ priceToPay });
-      await expect(deployed.buyToken()).to.be.revertedWith("Payment Failed");
+      await expect(deployed.buyToken()).to.be.revertedWith("Need to send 10000000000000000000000 wei");
     });
   });
 
@@ -99,9 +99,10 @@ describe("TicketSystem Testing", () => {
   });
 
   describe("redeem testing", () => {
+    const priceToPay = ethers.utils.parseEther("0.01")
     it("verifiying existence after mint", async () => {
-      const { deployed } = await setup({});
-      await deployed.buyToken();
+      const { deployed } = await setup({priceToPay});
+      await deployed.buyToken({value: priceToPay});
       const a = await deployed.tokenSerial(0);
       let b = await deployed.tokenURI(0);
       const stringB = await Buffer.from(b, "base64").toString("ascii");
@@ -109,8 +110,8 @@ describe("TicketSystem Testing", () => {
       expect(b.tokenId).to.equal(a);
     });
     it("token burned", async () => {
-      const { deployed } = await setup({});
-      await deployed.buyToken();
+      const { deployed } = await setup({priceToPay});
+      await deployed.buyToken({value: priceToPay});
       await deployed.redeem(0);
       await expect(deployed.ownerOf(0)).to.be.revertedWith(
         "ERC721: invalid token ID"
@@ -122,8 +123,8 @@ describe("TicketSystem Testing", () => {
         fisicalAddress: "Sprinfield Avenue",
         telefone: "015555555",
       };
-      const { deployed } = await setup({});
-      await deployed.buyToken();
+      const { deployed } = await setup({priceToPay});
+      await deployed.buyToken({value: priceToPay});
       await deployed.createClient(
         client.fullname,
         client.fisicalAddress,
